@@ -1,0 +1,5 @@
+git+https://github.com/Oneirag/ong_utils.git
+pandas
+xlrd
+ujson
+
