@@ -23,6 +23,7 @@ class TesteSiosApi(TestCase):
         With initialization this process must be faster
         """
         esios_indicators = EsiosApi(initialize_indicators=True)
+        self.esios = EsiosApi(initialize_indicators=False)
         sleep(5)  # <- So the thread can do its job
         with_indicators = "Esios with indicators"
         without_indicators = "Esios without indicators"
@@ -67,7 +68,7 @@ class TesteSiosApi(TestCase):
         test_agent = "ENDESA"
         test_units = df_up_sm[df_up_sm.Nombre.str.contains(test_agent)]['Código de UP']
         p48cierre_id = self.esios.get_id_by_name("p48cierre")
-        p48 = self.esios.get_esios_program(p48cierre_id, self.yesterday)
+        p48 = self.esios.get_esios_program(p48cierre_id, date=self.yesterday)
         p48_filtered = p48.filter(items=test_units)
         print(p48_filtered)
         self.assertFalse(p48_filtered.empty, f"No units found for {test_agent} for date {self.yesterday}")
@@ -86,7 +87,7 @@ class TesteSiosApi(TestCase):
         """Test if p48cierre can be downloaded"""
         date = self.yesterday
         p48cierre_id = self.esios.get_id_by_name("p48cierre")
-        df = self.esios.get_esios_program(p48cierre_id, date)
+        df = self.esios.get_esios_program(p48cierre_id, date=date)
         self.assertIsNotNone(df, "Received a None response")
         self.assertFalse(df.empty, "Received an empty dataframe as response")
         print(df)
@@ -116,7 +117,7 @@ class TesteSiosApi(TestCase):
         date = pd.Timestamp.now(tz=LOCAL_TZ).normalize() + pd.offsets.Day(-2)
 
         p48cierre_id = self.esios.get_id_by_name("p48cierre")
-        df = self.esios.get_esios_program(p48cierre_id, date, aggregate_daily=True)
+        df = self.esios.get_esios_program(p48cierre_id, date=date, aggregate_daily=True)
         self.assertIsNotNone(df, "Received a None response")
         self.assertFalse(df.empty, "Received an empty dataframe as response")
         print(df)

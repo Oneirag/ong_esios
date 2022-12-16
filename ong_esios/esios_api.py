@@ -36,12 +36,13 @@ class EsiosXmlParser():
         self.tree = ET.fromstring(data)
         ns = self.tree.tag[0:self.tree.tag.find("}") + 1]
         self.ns = {"": ns[1:-1]}
-        file_type = ns.split("/")[-2]
+        # file_type = ns.split("/")[-2]
         horizonte = self.tree.find("Horizonte", self.ns).attrib['v']
         fecha_ini, fecha_fin = map(pd.Timestamp, horizonte.split("/"))
         # if file_type == "P48-esios-MP":
         #     fecha_fin = fecha_fin + pd.offsets.Day(1)       # P48 includes 2 days
         self.dates = pd.date_range(fecha_ini, fecha_fin, freq="H", closed="left")
+        self.qh_dates = pd.date_range(fecha_ini, fecha_fin, freq="15T", closed="left")
         self.values = {}
 
     def parse_pvpc(self):
@@ -69,8 +70,15 @@ class EsiosXmlParser():
         """
 
         series_temporales = self.tree.findall("SeriesTemporales", self.ns)
+        # The element 2 might be either UPSalida or UPEntrada, so I'd rather leave the number
         up_list = [list(serie)[2].get('v') for serie in series_temporales]
-        df = pd.DataFrame(0.0, columns=set(up_list), index=self.dates[0::24] if aggregate_daily else self.dates)
+        # True if quarterhourly
+        is_qh = series_temporales[0].find("Periodo", self.ns).find("Resolucion", self.ns).get("v") == "PT15M"
+        if is_qh:
+            index = self.qh_dates[0::96] if aggregate_daily else self.qh_dates
+        else:
+            index = self.dates[0::24] if aggregate_daily else self.dates
+        df = pd.DataFrame(0.0, columns=set(up_list), index=index)
         # Convert dates to LOCAL_TZ
         df = df.reindex(df.index.tz_convert(LOCAL_TZ))
         arr = np.zeros(df.shape)
