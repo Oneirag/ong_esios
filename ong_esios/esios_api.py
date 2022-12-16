@@ -58,7 +58,7 @@ class EsiosXmlParser():
             periodo = serie.find("Periodo", self.ns)
             intervalos = periodo.findall("Intervalo", self.ns)
             self.values[metric] = [float(intervalo.find("Ctd", self.ns).attrib['v']) * 1000 for intervalo in
-                              intervalos]
+                                   intervalos]
         return self.dates, self.values
 
     def parse_program(self, aggregate_daily=False):
@@ -93,7 +93,8 @@ class EsiosXmlParser():
                 index = 0 if base_position == 0 else 1
                 arr[index, df.columns.get_loc(unidad_programacion)] = sum(values)
             else:
-                index = [int(intervalo.find("Pos", self.ns).attrib['v']) - 1 + base_position for intervalo in intervalos]
+                index = [int(intervalo.find("Pos", self.ns).attrib['v']) - 1 + base_position for intervalo in
+                         intervalos]
                 arr[index, df.columns.get_loc(unidad_programacion)] = values
 
         df[:] = arr
@@ -135,10 +136,11 @@ class EsiosApi:
          -H "Cookie: "
         """
         self.headers = {"Accept": "application/json; application/vnd.ong_esios-api-v1+json",
-                     "Content-Type": "application/json",
-                     "Host": "api.esios.ree.es",
-                     f"Authorization": f'Token token="{token}"',
-                     "Cookie": ""}
+                        "Content-Type": "application/json",
+                        "Host": "api.esios.ree.es",
+                        f"Authorization": f'Token token="{token}"',
+                        "x-api-key": token,     # New in dec 22
+                        "Cookie": ""}
 
         # Launch a thread to update indicators in background. It takes around 30 seconds
         self.df_indicators = None
@@ -177,7 +179,7 @@ class EsiosApi:
         js = self.__get_list(url, debug, as_of_date)
         df = pd.DataFrame(js)
         if "id" in df.columns:
-            df = df.set_index("id", drop=False)     # keep id in the columns
+            df = df.set_index("id", drop=False)  # keep id in the columns
         return df
 
     @property
@@ -277,10 +279,10 @@ class EsiosApi:
             js_req = ujson.loads(req.data)
             if "message" in js_req.keys():
                 logger.error(f"Error in request {url=} {id=} {date=} {js_req=}")
-                return None     # There was an error
+                return None  # There was an error
             if not is_indicator:
                 return js_req
-            else:   # Process indicator
+            else:  # Process indicator
                 df = pd.DataFrame()
                 for value in js_req['indicator']['values']:
                     df.loc[pd.Timestamp(value['datetime_utc']).tz_convert(LOCAL_TZ), value['geo_name']] = value['value']
@@ -320,8 +322,8 @@ if __name__ == '__main__':
     # esios = eSiosApi(background_initialize_indicators=True)   # Works ok
     # esios.print_id_name()                                     # Works OK
     esios = EsiosApi()
-    print(esios.get_id_by_name("SujetosMercado"))               # Works ok
-    print(esios.get_id_by_name("UnidadesProgramacion"))         # Works ok
+    print(esios.get_id_by_name("SujetosMercado"))  # Works ok
+    print(esios.get_id_by_name("UnidadesProgramacion"))  # Works ok
 
     # Test of SujetosMercado and UnidadesProgramacion only works with date=None
     date = pd.Timestamp.now(tz=LOCAL_TZ).normalize()
@@ -350,6 +352,6 @@ if __name__ == '__main__':
     if pvpc_json:
         dates = pvpc_json['dates']
         values = pvpc_json['values']
-    #    print(values)
+        #    print(values)
         print(values.keys())
     print("done")
