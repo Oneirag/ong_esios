@@ -1,4 +1,4 @@
-ong_utils@git+https://github.com/Oneirag/ong_utils.git
+ong_utils
 pandas
 xlrd
 ujson

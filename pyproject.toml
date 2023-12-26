@@ -1,0 +1,28 @@
+[project]
+name = "ong_esios"
+version = "0.3.0"
+# license = {file = "LICENSE.txt"}
+authors = [
+    { email = "oneirag@yahoo.es", name = "Oscar Neira" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+description='Functions to download from from esios api'
+
+dynamic = ["dependencies"]
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+# scanning for namespace packages is true by default in pyproject.toml, so
+# you do NOT need to include the following line.
+namespaces = true
+where = ["src"]
+
+[project.urls]  # Optional
+"Homepage" = "https://github.com/Oneirag/ong_esios"
+"Source" = "https://github.com/Oneirag/ong_esios"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

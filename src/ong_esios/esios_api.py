@@ -41,8 +41,8 @@ class EsiosXmlParser():
         fecha_ini, fecha_fin = map(pd.Timestamp, horizonte.split("/"))
         # if file_type == "P48-esios-MP":
         #     fecha_fin = fecha_fin + pd.offsets.Day(1)       # P48 includes 2 days
-        self.dates = pd.date_range(fecha_ini, fecha_fin, freq="H", closed="left")
-        self.qh_dates = pd.date_range(fecha_ini, fecha_fin, freq="15T", closed="left")
+        self.dates = pd.date_range(fecha_ini, fecha_fin, freq="H", inclusive="left")
+        self.qh_dates = pd.date_range(fecha_ini, fecha_fin, freq="15T", inclusive="left")
         self.values = {}
 
     def parse_pvpc(self):
@@ -146,7 +146,7 @@ class EsiosApi:
         self.headers = {"Accept": "application/json; application/vnd.ong_esios-api-v1+json",
                         "Content-Type": "application/json",
                         "Host": "api.esios.ree.es",
-                        f"Authorization": f'Token token="{token}"',
+                        # f"Authorization": f'Token token="{token}"',   Removed 21-02-2023!
                         "x-api-key": token,     # New in dec 22
                         "Cookie": ""}
 
@@ -356,9 +356,11 @@ if __name__ == '__main__':
         values = pvpc_json['values']
         print(values.keys())
     date = pd.Timestamp(2014, 6, 1)
+    date = pd.Timestamp(2023, 6, 1)
     pvpc_json = esios.download("archives", 80, date)
     if pvpc_json:
         dates = pvpc_json['dates']
+        print(dates)
         values = pvpc_json['values']
         #    print(values)
         print(values.keys())
