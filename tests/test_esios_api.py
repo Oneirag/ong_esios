@@ -123,21 +123,22 @@ class TesteSiosApi(TestCase):
         print(df)
 
     def test_pvpc(self):
-        """Tesf of downloading pvpc data"""
-        date = pd.Timestamp.today().normalize()
-        pvpc_json = self.esios.download_by(id=80, date=date)
-        if pvpc_json:
-            dates = pvpc_json['dates']
-            values = pvpc_json['values']
-            print(values.keys())
-        date = pd.Timestamp(2014, 6, 1)
-        pvpc_json = self.esios.download_by(name="pvpcdesglosehorario", date=date)
-        if pvpc_json:
-            dates = pvpc_json['dates']
-            values = pvpc_json['values']
-            #    print(values)
-            print(values.keys())
-        print("done")
+        """Test of downloading pvpc data"""
+        for date in (self.date_95d_ago, self.yesterday, self.today):
+            with self.subTest(date=date):
+                pvpc_json = self.esios.download_by(id=80, date=date)
+                if pvpc_json:
+                    dates = pvpc_json['dates']
+                    values = pvpc_json['values']
+                    print(values.keys())
+                date = pd.Timestamp(2014, 6, 1)
+                pvpc_json = self.esios.download_by(name="pvpcdesglosehorario", date=date)
+                if pvpc_json:
+                    dates = pvpc_json['dates']
+                    values = pvpc_json['values']
+                    #    print(values)
+                    print(values.keys())
+                print("done")
 
     def test_analysis_ancillary_services(self):
         """Calculates per agent quotas of ancillary services markets"""

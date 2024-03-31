@@ -1,12 +1,12 @@
 [project]
 name = "ong_esios"
-version = "0.3.0"
+version = "0.3.1"
 # license = {file = "LICENSE.txt"}
 authors = [
     { email = "oneirag@yahoo.es", name = "Oscar Neira" }
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 description='Functions to download from from esios api'
 
 dynamic = ["dependencies"]

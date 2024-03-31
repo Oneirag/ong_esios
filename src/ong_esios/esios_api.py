@@ -41,8 +41,8 @@ class EsiosXmlParser():
         fecha_ini, fecha_fin = map(pd.Timestamp, horizonte.split("/"))
         # if file_type == "P48-esios-MP":
         #     fecha_fin = fecha_fin + pd.offsets.Day(1)       # P48 includes 2 days
-        self.dates = pd.date_range(fecha_ini, fecha_fin, freq="H", inclusive="left")
-        self.qh_dates = pd.date_range(fecha_ini, fecha_fin, freq="15T", inclusive="left")
+        self.dates = pd.date_range(fecha_ini, fecha_fin, freq="h", inclusive="left")
+        self.qh_dates = pd.date_range(fecha_ini, fecha_fin, freq="15min", inclusive="left")
         self.values = {}
 
     def parse_pvpc(self):
