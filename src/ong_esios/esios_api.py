@@ -1,15 +1,15 @@
-import time
+import xml.etree.ElementTree as ET
+from io import BytesIO  # Process I90DIA
+from pprint import pprint
+from threading import Thread
+from zipfile import ZipFile  # Process I90DIA
 
 import numpy as np
-import ujson
-from pprint import pprint
-from ong_esios import config, logger, http, LOCAL_TZ
 import pandas as pd
-import xml.etree.ElementTree as ET
-from io import BytesIO          # Process I90DIA
-from zipfile import ZipFile     # Process I90DIA
-from threading import Thread
+import ujson
 from ong_utils import OngTimer
+
+from ong_esios import config, logger, http, LOCAL_TZ
 
 timer = OngTimer()
 
@@ -254,7 +254,10 @@ class EsiosApi:
     def __request_esios(self, url, id, date, is_indicator=False):
         """Performs a request and returns req"""
         if date:
-            fields = {"date": date.isoformat()}
+            if isinstance(date, list):
+                fields = {"start_date": date[0].isoformat(), "end_date": date[1].isoformat()}
+            else:
+                fields = {"date": date.isoformat()}
         else:
             fields = None
         if url.startswith("/"):
