@@ -1,5 +1,5 @@
 ong_utils
 pandas
-xlrd
+openpyxl
 ujson
 
