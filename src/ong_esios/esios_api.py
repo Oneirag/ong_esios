@@ -269,12 +269,12 @@ class EsiosApi:
         req = http.request("get", download_url, headers=self.headers, fields=fields)
         return req
 
-    def download(self, url: str, id: int, date, parser=None, is_indicator=False, **kwargs):
+    def download(self, url: str, id: int, date, parser=None, is_indicator=False, **kwargs) -> dict | None:
         """
         Returns a json of the data for an indicator in a specific date
         :param url: either "archives", "indicators" or "archives_json"
         :param id: number of indicator
-        :param date: date for reading. Must be first hour of day in local timezone
+        :param date: date for reading. Must be first hour of day in local timezone. Can be a list of date_start, date_end
         :param parser: a function that receives request.data and parses result. If None, it will be based
         on request content_type. If json, the parsed json will be returned. If xml it will be parsed
         with "parse_xml_pvpc" and if content-type=="zip" with parse_zip_file. If not None,
